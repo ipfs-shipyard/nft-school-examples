@@ -5,11 +5,7 @@ import { NFTStorage } from 'nft.storage';
 import { useContractLoader } from "../hooks";
 import Account from "./Account";
 import { Transactor } from "../helpers";
-
-const DEFAULT_CONTRACT_NAME = "NFTMinter";
-
-// FIXME: don't hardcode the key! let user supply instead
-const NFT_STORAGE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjY5RGIwQjdjNzA3Y0I0MjZCMjg2MUI1NTY2ZEEwZTZjQzVmOTAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyMjA2NTE1OTYxMCwibmFtZSI6Im5mdHNjaG9vbC10ZXN0In0.DSgQ5yot5Qyp4_OMg16h7hHOSRUQK7jkjiH7sM3DHOE";
+import { NFT_STORAGE_KEY, DEFAULT_CONTRACT_NAME } from "../constants";
 
 async function mintNFT({contract, ownerAddress, provider, gasPrice, setStatus, image, name, description}) {
 
