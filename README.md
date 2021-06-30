@@ -14,4 +14,9 @@ Check out [end-to-end](./end-to-end) for an example of minting NFTs from a web b
 
 See the guide at https://nftschool.dev/tutorials/end-to-end/
 
+### Lazy Minting
+
+The [lazy-minting](./lazy-minting/) directory contains an example of minting NFTs at the time of first sale. This works by redeeming a signed "voucher" issued by the NFT creator.
+
+See the guide at https://nftschool.dev/how-to/lazy-minting/
 
