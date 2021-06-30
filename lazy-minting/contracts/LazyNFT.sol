@@ -10,15 +10,15 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 
 contract LazyNFT is ERC721URIStorage, EIP712, AccessControl {
-  using ECDSA for bytes32;
-
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+  string private constant SIGNING_DOMAIN = "LazyNFT-Voucher";
+  string private constant SIGNATURE_VERSION = "1";
 
   mapping (address => uint256) pendingWithdrawals;
 
   constructor(address payable minter)
     ERC721("LazyNFT", "LAZ") 
-    EIP712("LazyNFT-Voucher", "1") {
+    EIP712(SIGNING_DOMAIN, SIGNATURE_VERSION) {
       _setupRole(MINTER_ROLE, minter);
     }
 
@@ -98,7 +98,7 @@ contract LazyNFT is ERC721URIStorage, EIP712, AccessControl {
   /// @param voucher An NFTVoucher describing an unminted NFT.
   function _verify(NFTVoucher calldata voucher) internal view returns (address) {
     bytes32 digest = _hash(voucher);
-    return digest.toEthSignedMessageHash().recover(voucher.signature);
+    return ECDSA.recover(digest, voucher.signature);
   }
 
   function supportsInterface(bytes4 interfaceId) public view virtual override (AccessControl, ERC721) returns (bool) {

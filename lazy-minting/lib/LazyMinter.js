@@ -1,5 +1,4 @@
 const ethers = require('ethers')
-const { TypedDataUtils } = require('ethers-eip712')
 
 // These constants must match the ones used in the smart contract.
 const SIGNING_DOMAIN_NAME = "LazyNFT-Voucher"
@@ -32,12 +31,6 @@ class LazyMinter {
     this.signer = signer
 
     this.types = {
-      EIP712Domain: [
-        {name: "name", type: "string"},
-        {name: "version", type: "string"},
-        {name: "chainId", type: "uint256"},
-        {name: "verifyingContract", type: "address"},
-      ],
       NFTVoucher: [
         {name: "tokenId", type: "uint256"},
         {name: "minPrice", type: "uint256"},
@@ -57,9 +50,8 @@ class LazyMinter {
    */
   async createVoucher(tokenId, uri, minPrice = 0) {
     const voucher = { tokenId, uri, minPrice }
-    const typedData = await this._formatVoucher(voucher)
-    const digest = TypedDataUtils.encodeDigest(typedData)
-    const signature = await this.signer.signMessage(digest)
+    const domain = await this._signingDomain()
+    const signature = await this.signer._signTypedData(domain, this.types, voucher)
     return {
       ...voucher,
       signature,
