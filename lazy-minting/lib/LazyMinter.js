@@ -29,14 +29,6 @@ class LazyMinter {
   constructor({ contractAddress, signer }) {
     this.contractAddress = contractAddress
     this.signer = signer
-
-    this.types = {
-      NFTVoucher: [
-        {name: "tokenId", type: "uint256"},
-        {name: "minPrice", type: "uint256"},
-        {name: "uri", type: "string"},  
-      ]
-    }
   }
 
   /**
@@ -51,7 +43,14 @@ class LazyMinter {
   async createVoucher(tokenId, uri, minPrice = 0) {
     const voucher = { tokenId, uri, minPrice }
     const domain = await this._signingDomain()
-    const signature = await this.signer._signTypedData(domain, this.types, voucher)
+    const types = {
+      NFTVoucher: [
+        {name: "tokenId", type: "uint256"},
+        {name: "minPrice", type: "uint256"},
+        {name: "uri", type: "string"},  
+      ]
+    }
+    const signature = await this.signer._signTypedData(domain, types, voucher)
     return {
       ...voucher,
       signature,
@@ -74,21 +73,6 @@ class LazyMinter {
       chainId,
     }
     return this._domain
-  }
-
-  /**
-   * @private
-   * @param {NFTVoucher} voucher 
-   * @returns the given NFTVoucher object, formatted with type info and other trappings from EIP-712. Ready to be hashed and signed.
-   */
-  async _formatVoucher(voucher) {
-    const domain = await this._signingDomain()
-    return {
-      domain,
-      types: this.types,
-      primaryType: 'NFTVoucher',
-      message: {...voucher, signature: undefined},
-    }
   }
 }
 
