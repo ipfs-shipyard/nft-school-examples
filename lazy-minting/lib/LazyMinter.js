@@ -12,6 +12,7 @@ const SIGNING_DOMAIN_VERSION = "1"
  * @property {ethers.BigNumber | number} tokenId the id of the un-minted NFT
  * @property {ethers.BigNumber | number} minPrice the minimum price (in wei) that the creator will accept to redeem this NFT
  * @property {string} uri the metadata URI to associate with this NFT
+ * @property {ethers.BytesLike} signature an EIP-712 signature of all fields in the NFTVoucher, apart from signature itself.
  */
 
 /**
@@ -55,7 +56,6 @@ class LazyMinter {
    * 
    * @typedef {object} CreateVoucherResult
    * @property {NFTVoucher} voucher an NFTVoucher object describing an un-minted NFT
-   * @property {ethers.BytesLike} digest the keccack256 hash digest of the NFTVoucher, prepared according to EIP-712
    * @property {ethers.BytesLike} signature a signature of `digest`, created with this `LazyMinter`'s signing key
    * 
    * @returns {CreateVoucherResult}
@@ -66,9 +66,8 @@ class LazyMinter {
     const digest = TypedDataUtils.encodeDigest(typedData)
     const signature = await this.signer.signMessage(digest)
     return {
-      voucher,
+      ...voucher,
       signature,
-      digest,
     }
   }
 
@@ -101,7 +100,7 @@ class LazyMinter {
       domain,
       types: this.types,
       primaryType: 'NFTVoucher',
-      message: voucher,
+      message: {...voucher, signature: undefined},
     }
   }
 }
