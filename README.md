@@ -12,7 +12,7 @@ NFT School is just getting started, so check back for more examples soon!
 
 Check out [end-to-end](./end-to-end) for an example of minting NFTs from a web browser, using [nft.storage](https://nft.storage) to store NFT data on [IPFS](https://ipfs.io) and [Filecoin](https://filecoin.io).
 
-See the guide at https://nftschool.dev/tutorials/end-to-end/
+See the guide at https://nftschool.dev/tutorial/end-to-end-experience/
 
 ### Lazy Minting
 
