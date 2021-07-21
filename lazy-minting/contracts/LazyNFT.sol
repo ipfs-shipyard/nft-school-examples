@@ -93,6 +93,17 @@ contract LazyNFT is ERC721URIStorage, EIP712, AccessControl {
     )));
   }
 
+  /// @notice Returns the chain id of the current blockchain.
+  /// @dev This is used to workaround an issue with ganache returning different values from the on-chain chainid() function and
+  ///  the eth_chainId RPC method. See https://github.com/protocol/nft-website/issues/121 for context.
+  function getChainID() external view returns (uint256) {
+    uint256 id;
+    assembly {
+        id := chainid()
+    }
+    return id;
+  }
+
   /// @notice Verifies the signature for a given NFTVoucher, returning the address of the signer.
   /// @dev Will revert if the signature is invalid. Does not verify that the signer is authorized to mint NFTs.
   /// @param voucher An NFTVoucher describing an unminted NFT.
