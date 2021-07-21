@@ -23,11 +23,11 @@ class LazyMinter {
    * Create a new LazyMinter targeting a deployed instance of the LazyNFT contract.
    * 
    * @param {Object} options
-   * @param {string} contractAddress the address of the deployed LazyNFT contract
+   * @param {ethers.Contract} contract an ethers Contract that's wired up to the deployed contract
    * @param {ethers.Signer} signer a Signer whose account is authorized to mint NFTs on the deployed contract
    */
-  constructor({ contractAddress, signer }) {
-    this.contractAddress = contractAddress
+  constructor({ contract, signer }) {
+    this.contract = contract
     this.signer = signer
   }
 
@@ -65,11 +65,11 @@ class LazyMinter {
     if (this._domain != null) {
       return this._domain
     }
-    const chainId = await this.signer.getChainId()
+    const chainId = await this.contract.getChainID()
     this._domain = {
       name: SIGNING_DOMAIN_NAME,
       version: SIGNING_DOMAIN_VERSION,
-      verifyingContract: this.contractAddress,
+      verifyingContract: this.contract.address,
       chainId,
     }
     return this._domain

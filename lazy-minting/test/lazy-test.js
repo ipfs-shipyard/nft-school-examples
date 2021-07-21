@@ -1,5 +1,6 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const hardhat = require("hardhat");
+const { ethers } = hardhat;
 const { LazyMinter } = require('../lib')
 
 async function deploy() {
@@ -28,13 +29,12 @@ describe("LazyNFT", function() {
     const LazyNFT = await ethers.getContractFactory("LazyNFT");
     const lazynft = await LazyNFT.deploy(minter);
     await lazynft.deployed();
-
   });
 
   it("Should redeem an NFT from a signed voucher", async function() {
     const { contract, redeemerContract, redeemer, minter } = await deploy()
 
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: minter })
+    const lazyMinter = new LazyMinter({ contract, signer: minter })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
 
     await expect(redeemerContract.redeem(redeemer.address, voucher))
@@ -47,7 +47,7 @@ describe("LazyNFT", function() {
   it("Should fail to redeem an NFT that's already been claimed", async function() {
     const { contract, redeemerContract, redeemer, minter } = await deploy()
 
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: minter })
+    const lazyMinter = new LazyMinter({ contract, signer: minter })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
 
     await expect(redeemerContract.redeem(redeemer.address, voucher))
@@ -66,7 +66,7 @@ describe("LazyNFT", function() {
     const signers = await ethers.getSigners()
     const rando = signers[signers.length-1];
     
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: rando })
+    const lazyMinter = new LazyMinter({ contract, signer: rando })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
 
     await expect(redeemerContract.redeem(redeemer.address, voucher))
@@ -79,7 +79,7 @@ describe("LazyNFT", function() {
     const signers = await ethers.getSigners()
     const rando = signers[signers.length-1];
     
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: rando })
+    const lazyMinter = new LazyMinter({ contract, signer: rando })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
     voucher.tokenId = 2
     await expect(redeemerContract.redeem(redeemer.address, voucher))
@@ -92,7 +92,7 @@ describe("LazyNFT", function() {
     const signers = await ethers.getSigners()
     const rando = signers[signers.length-1];
     
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: rando })
+    const lazyMinter = new LazyMinter({ contract, signer: rando })
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi")
 
     const dummyData = ethers.utils.randomBytes(128)
@@ -105,7 +105,7 @@ describe("LazyNFT", function() {
   it("Should redeem if payment is >= minPrice", async function() {
     const { contract, redeemerContract, redeemer, minter } = await deploy()
 
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: minter })
+    const lazyMinter = new LazyMinter({ contract, signer: minter })
     const minPrice = ethers.constants.WeiPerEther // charge 1 Eth
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi", minPrice)
 
@@ -119,7 +119,7 @@ describe("LazyNFT", function() {
   it("Should fail to redeem if payment is < minPrice", async function() {
     const { contract, redeemerContract, redeemer, minter } = await deploy()
 
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: minter })
+    const lazyMinter = new LazyMinter({ contract, signer: minter })
     const minPrice = ethers.constants.WeiPerEther // charge 1 Eth
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi", minPrice)
 
@@ -131,7 +131,7 @@ describe("LazyNFT", function() {
   it("Should make payments available to minter for withdrawal", async function() {
     const { contract, redeemerContract, redeemer, minter } = await deploy()
 
-    const lazyMinter = new LazyMinter({ contractAddress: contract.address, signer: minter })
+    const lazyMinter = new LazyMinter({ contract, signer: minter })
     const minPrice = ethers.constants.WeiPerEther // charge 1 Eth
     const voucher = await lazyMinter.createVoucher(1, "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi", minPrice)
     

@@ -18,5 +18,16 @@ task("accounts", "Prints the list of accounts", async () => {
  */
 module.exports = {
   solidity: "0.8.4",
+  defaultNetwork: "hardhat",
+  networks: {
+    hardhat: {},
+    ganache: {
+      url: "http://127.0.0.1:7545",
+      accounts: {
+        mnemonic: "symptom bean awful husband dice accident crush tank sun notice club creek",
+      },
+      // chainId: 1234,
+    }
+  }
 };
 
