@@ -6,21 +6,46 @@ import { useContractLoader } from "../hooks";
 import Account from "./Account";
 import { Transactor } from "../helpers";
 import { NFT_STORAGE_KEY, DEFAULT_CONTRACT_NAME } from "../constants";
+import axios from 'axios';
 
-async function mintNFT({contract, ownerAddress, provider, gasPrice, setStatus, image, name, description}) {
+const convertBlobToBase64 = async (blob) => {
+  return await blobToBase64(blob);
+}
 
-  // First we use the nft.storage client library to add the image and metadata to IPFS / Filecoin
+const blobToBase64 = blob => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = error => reject(error);
+})
+
+async function mintNFT({contract, ownerAddress, provider, gasPrice, setStatus, image, image2, name, description}) {
+
+  const img1Converted = await convertBlobToBase64(image);
+  const img2Converted = await convertBlobToBase64(image2)
+  setStatus("Images converted...")
+
+  let blob1 = new Blob([image], {type:'image/jpg'})
+
+  await axios.post("http://127.0.0.1:5000/", {img1: img1Converted, img2:img2Converted},  {headers: {
+    'Content-Type': 'application/json',
+  }, responseType: 'blob'})
+                            .then((res) => {
+                              blob1 = new Blob([res.data], {type: 'image/jpeg'})
+                            }).then(console.log)
+  
+  const blob = new Blob([blob1], { type: 'image/jpeg' })
+  console.log(blob)
+
   const client = new NFTStorage({ token: NFT_STORAGE_KEY });
   setStatus("Uploading to nft.storage...")
   const metadata = await client.store({
     name,
     description,
-    image,
+    image:blob,
   });
   setStatus(`Upload complete! Minting token with metadata URI: ${metadata.url}`);
 
-  // the returned metadata.url has the IPFS URI we want to add.
-  // our smart contract already prefixes URIs with "ipfs://", so we remove it before calling the `mintToken` function
   const metadataURI = metadata.url.replace(/^ipfs:\/\//, "");
 
   // scaffold-eth's Transactor helper gives us a nice UI popup when a transaction is sent
@@ -67,19 +92,27 @@ export default function Minter({
   const address = contract ? contract.address : "";
 
   const [file, setFile] = useState(null);
+  const [file2, setFile2] = useState(null);
   const [previewURL, setPreviewURL] = useState(null);
+  const [previewURL2, setPreviewURL2] = useState(null);
   const [nftName, setName] = useState("");
   const [description, setDescription] = useState("");
   const [minting, setMinting] = useState(false);
   const [status, setStatus] = useState("");
   const [tokenId, setTokenId] = useState(null);
 
-  const beforeUpload = (file, fileList) => {
-    console.log(file, fileList);
+  const beforeUpload = (file) => {
     setFile(file);
     setPreviewURL(URL.createObjectURL(file));
     return false;
   }
+
+  const beforeUpload2 = (file2) => {
+    setFile2(file2);
+    setPreviewURL2(URL.createObjectURL(file2));
+    return false;
+  }
+
 
   const uploadButton = (
     <div>
@@ -104,10 +137,28 @@ export default function Minter({
       >
         {uploadButton}
       </Upload>
+      </div>
+  );
+
+  const uploadView2 = (
+    <div>
+      Drop an image file or click below to select.
+      <Upload
+        name="avatar2"
+        accept=".jpeg,.jpg,.png,.gif"
+        listType="picture-card"
+        className="avatar-uploader"
+        showUploadList={false}
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        beforeUpload={beforeUpload2}
+      >
+        {uploadButton}
+      </Upload>
     </div>
   );
 
-  const preview = previewURL ? <img src={previewURL} style={{maxWidth: "800px"}}/> : <div/>
+  const preview = previewURL ? <img src={previewURL} style={{maxWidth: "400px"}}/> : <div/>
+  const preview2 = previewURL2 ? <img src={previewURL2} style={{maxWidth: "400px"}}/> : <div/>
 
   const nameField = (
     <Input placeholder="Enter a name for your NFT" onChange={e => {
@@ -134,7 +185,8 @@ export default function Minter({
         gasPrice, 
         setStatus,
         name: nftName, 
-        image: file, 
+        image: file,
+        image2: file2, 
         description 
       }).then(newTokenId => {
         setMinting(false);
@@ -175,6 +227,8 @@ export default function Minter({
       >
         { file == null && uploadView }
         {preview}
+        { file2 == null && uploadView2 }
+        {preview2}
         {nameField}
         {descriptionField}
         {mintButton}

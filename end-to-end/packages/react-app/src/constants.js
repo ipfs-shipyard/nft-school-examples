@@ -1,5 +1,5 @@
 // API token for nft.storage. Please sign up and replace this with your own key from https://nft.storage/manage/
-export const NFT_STORAGE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQxMjY5RGIwQjdjNzA3Y0I0MjZCMjg2MUI1NTY2ZEEwZTZjQzVmOTAiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyMjA2NTE1OTYxMCwibmFtZSI6Im5mdHNjaG9vbC10ZXN0In0.DSgQ5yot5Qyp4_OMg16h7hHOSRUQK7jkjiH7sM3DHOE";
+export const NFT_STORAGE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ3OTZjM0Q4ZDYyQjRkQzQ0NkUyMUI1YTZkMWY2MjhENTI1ZTM2NEMiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0ODI3OTEyMjMxNiwibmFtZSI6Im5zdC1uZnQtbWludCJ9.og42Xn-qO-W8vtqGo1hRaILRWk9jq0HVA3PjcPvweJQ";
 
 // Infura project ID. If you're building a real app based on this, please replace with your own from https://infura.io/dashboard/ethereum
 export const INFURA_ID = "69f75bb89ba74822b512b464ef1495c9";
