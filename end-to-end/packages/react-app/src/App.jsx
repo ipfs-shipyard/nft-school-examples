@@ -254,7 +254,7 @@ function App(props) {
               onClick={() => { setRoute("/view"); }}
               to="/view">View an NFT</Link>
           </Menu.Item>
-          <Menu.Item key="/contract">
+          {/*<Menu.Item key="/contract">
             <Link
               onClick={() => {
                 setRoute("/contract");
@@ -263,7 +263,7 @@ function App(props) {
             >
               NFTMinter Contract
             </Link>
-          </Menu.Item>
+          </Menu.Item>*/}
         </Menu>
 
         <Switch>

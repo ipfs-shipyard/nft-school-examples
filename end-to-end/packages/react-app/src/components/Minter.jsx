@@ -125,7 +125,7 @@ export default function Minter({
 
   const uploadView = (
     <div>
-      Drop an image file or click below to select.
+      Drop content file or click below to select.
       <Upload
         name="avatar"
         accept=".jpeg,.jpg,.png,.gif"
@@ -142,7 +142,7 @@ export default function Minter({
 
   const uploadView2 = (
     <div>
-      Drop an image file or click below to select.
+      Drop style file or click below to select.
       <Upload
         name="avatar2"
         accept=".jpeg,.jpg,.png,.gif"
